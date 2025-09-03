@@ -1,9 +1,11 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import genToken from "../config/token.js";
 
+// SignUp Controller
 export const signUp = async (req, res) => {
-  const { name, userName, email, password } = req.body;
-  console.log(req.body)
+    console.log(req.body)
+    const { name, userName, email, password } = req.body;
     try {       
         // Validate user data
         if(!name || !userName || !email || !password) {
@@ -33,8 +35,48 @@ export const signUp = async (req, res) => {
 
         // Create new user
         const newUser = await User.create({ name, userName, email, password: hashedPassword });
+        const token =  await genToken(newUser._id);
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: true,
+            maxAge: 30*24*60*60*1000 // 30 days (in secs)
+        });
         res.status(201).send("New user created successfully");
     } catch (error) {
         res.status(500).json({ message: error.message });
     }       
+};
+
+// SignIn Controller
+export const signIn = async (req, res) => {
+    const {userName, password} = req.body;
+    try {
+        // Validate user data
+        if(!userName || !password) {
+            return res.status(400).json({message: "All fields are required"});
+        }  
+        
+        // Check if user exists
+        const user = await User.findOne({userName});
+        if(!user) {
+            return res.status(400).json({message: "User does not exist"});
+        }
+
+        // Compare password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if(!passwordMatch) {
+            return res.status(400).json({message: "Invalid credentials"});
+        }
+
+        // Allow the user to login
+        const token =  await genToken(user._id);
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: true,
+            maxAge: 30*24*60*60*1000 // 30 days (in secs)
+        });
+        res.status(200).json({message: "User signed in successfully"});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
 };
