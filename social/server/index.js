@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
@@ -16,6 +17,10 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173", // Vite dev server
+  credentials: true, // Allow cookies
+}));
 
 // Routes
 app.use('/api/auth', authRouter);
