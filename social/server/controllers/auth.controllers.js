@@ -35,6 +35,8 @@ export const signUp = async (req, res) => {
 
         // Create new user
         const newUser = await User.create({ name, userName, email, password: hashedPassword });
+
+        // Token
         const token =  await genToken(newUser._id);
         res.cookie("token", token, {
             httpOnly: true,
@@ -69,6 +71,7 @@ export const signIn = async (req, res) => {
         }
 
         // Allow the user to login
+        // Token
         const token =  await genToken(user._id);
         res.cookie("token", token, {
             httpOnly: true,

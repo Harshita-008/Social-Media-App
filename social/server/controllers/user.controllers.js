@@ -4,7 +4,7 @@ export const getCurrentUser = async (req, res) => {
     const userId = req.userId;
 
     try {
-        const user = await User.findById(userId).select("-password");
+        const user = await User.findById(userId).select("-password");  // select all fields except password
 
         if(!user) {
             return res.status(404).json({message: "User not found"});
