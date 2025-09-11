@@ -1,98 +1,19 @@
-// // pages/SignIn.jsx
-// import React, { useState } from "react";
-// import { Link } from "react-router-dom";
-
-// function SignIn() {
-//   const [form, setForm] = useState({ email: "", password: "" });
-
-//   const handleChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Login Data:", form);
-//     alert("Login successful!");
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-purple-600 via-pink-500 to-yellow-400">
-//       <div className="bg-white p-8 rounded-2xl shadow-2xl w-96">
-//         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-//           Welcome Back
-//         </h2>
-//         <form onSubmit={handleSubmit} className="space-y-4">
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email"
-//             value={form.email}
-//             onChange={handleChange}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-//           />
-//           <input
-//             type="password"
-//             name="password"
-//             placeholder="Password"
-//             value={form.password}
-//             onChange={handleChange}
-//             required
-//             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-//           />
-
-//           {/* Forgot Password Link */}
-//           <div className="text-right">
-//             <Link
-//               to="/forgot-password"
-//               className="text-sm text-purple-600 hover:underline"
-//             >
-//               Forgot Password?
-//             </Link>
-//           </div>
-
-//           <button
-//             type="submit"
-//             className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-2 rounded-lg hover:opacity-90 transition"
-//           >
-//             Sign In
-//           </button>
-//         </form>
-
-//         <p className="text-center text-gray-600 mt-4">
-//           Don’t have an account?{" "}
-//           <Link to="/signup" className="text-purple-600 font-semibold">
-//             Sign Up
-//           </Link>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default SignIn;
-
-
-
-
-
-
-
-
-
-
-
 import React , {useState} from "react";
 import logo from "../assets/socialLogo.png";
 import logo2 from "../assets/logo2.png";
 import { Link } from "react-router-dom";
 import { signIn } from "../apiCalls/authCalls.js";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice.js";
+
 
 function SignIn() {
    const [userName , setUserName] = useState("");
    const [password , setPassword] = useState("");
+
    const navigate = useNavigate();
+   const dispatch = useDispatch()
 
    const handleSignIn = async() => {
     if(!userName || !password){
@@ -109,6 +30,13 @@ function SignIn() {
       const response =  await signIn(user);
        
       console.log("Sign In Successful" , response);
+
+      dispatch(setUserData(response))
+
+      
+
+
+      
         navigate("/home");
       // Clear the form
       setUserName("");

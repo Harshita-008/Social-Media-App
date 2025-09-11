@@ -1,7 +1,6 @@
 import axios from "axios";
-import { API_BASE_URL } from "./config.js";
+import { API_BASE_URL } from "./config";
 
-// Axios instance for cleaner code. Aythentication-related calls.
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // always send cookies/credentials
@@ -13,16 +12,24 @@ export const signUp = async (userData) => {
     const response = await api.post("/api/auth/signup", userData);
     return response.data;
   } catch (error) {
-    throw error;
+    throw error.response.data;
   }
 }
 
-// Sign In
 export const signIn = async (userData) => {
   try {
     const response = await api.post("/api/auth/signin", userData);
     return response.data;
   } catch (error) {
-    throw error;
+    throw error.response.data;
+  }
+}
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get("/api/user/current");
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
   }
 }
